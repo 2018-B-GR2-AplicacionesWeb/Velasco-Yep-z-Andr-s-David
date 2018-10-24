@@ -43,3 +43,61 @@ function imprimirEnConsola(texto) {
 }
 
 saludar('andres',imprimirEnConsola);
+
+var variable = 'valor'; //Nunca mas
+let edad = 29;  // Mutar objeto.....
+edad = 30
+const casado = false;  // Inmutable
+
+const mascotas = {}
+mascotas.cachetes = 'cachetes';
+mascotas.numero = 1;
+
+delete mascotas.numero;
+const carros = []
+
+// Anonymos Functions
+// Asignar variables
+const saludar = function () {
+
+
+};
+
+// Asignar metodos a un objeto
+const usuario = {
+    nombre: 'Andres',
+    f:function () {
+        //implementacion
+    }
+}
+
+// ENviar como paramento
+saludar('andres',function (texto) {
+    console.log(texto)
+})
+
+
+// fat arrow functions -> =>
+
+const saludarV3 = () => {
+
+};
+
+
+saludarV3();
+
+const usuarioV2={
+    nombre: 'Andres',
+    metodo: ()=>{
+
+    }
+};
+
+saludar("Adrian",(texto)=>{
+    console.log(texto)
+})
+
+const sumarDosNumerosV2 = (n1,n2) => n1+n2;
+const saludarV5 = (saludo) => console.log(saludo);
+saludar('hola',(saludo) => console.log(saludo));
+
