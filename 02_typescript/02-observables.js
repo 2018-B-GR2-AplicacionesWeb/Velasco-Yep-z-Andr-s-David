@@ -44,6 +44,9 @@ const observableConcatenado$ = numeros$
     return { datos: value };
 }));
 promesita$
+    .pipe(map((valor) => {
+    return { datos: valor };
+}))
     .subscribe((ok) => {
     console.log('Concatenado bien ', ok);
 }, (error) => {
@@ -51,3 +54,4 @@ promesita$
 }, () => {
     console.log('Completado');
 });
+//inquierer js

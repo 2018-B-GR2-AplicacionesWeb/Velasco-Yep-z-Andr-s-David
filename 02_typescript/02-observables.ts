@@ -92,7 +92,13 @@ const observableConcatenado$ = numeros$
                     );
 promesita$
 
-
+    .pipe(
+        map(
+            (valor)=>{
+                return {datos:valor}
+            }
+        )
+    )
     .subscribe(
 
         (ok)=>{
