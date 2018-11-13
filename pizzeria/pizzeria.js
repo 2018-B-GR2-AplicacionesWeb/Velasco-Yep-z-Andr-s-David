@@ -3,15 +3,48 @@ const rxjs = require('rxjs');
 const fs = require('fs');
 const map = require('rxjs/operators').map;
 const reduce = require('rxjs/operators').reduce;
+class Cliente {
+}
+class Pizza {
+    constructor(tipo, size, precio) {
+        this.precio = 0.00;
+        this.precio = precio;
+        this.size = size;
+        this.tipo = tipo;
+    }
+}
+class Orden {
+    constructor(pizza, cantidad) {
+        this.valor_detalle = 0.0;
+        this.toString = () => {
+            let espacios = "            ";
+            return `${this.pizza.tipo}${espacios.substring(this.pizza.tipo.length)}${this.pizza.size}${espacios.substring(this.pizza.size.length)}${this.cantidad}${espacios.substring(String(this.cantidad).length)}${this.pizza.precio}`;
+        };
+        this.pizza = pizza;
+        this.cantidad = cantidad;
+        this.valor_detalle = this.cantidad * this.pizza.precio;
+    }
+}
+class Pedido {
+    constructor() {
+        this.ordenes = [];
+    }
+    mostrar_ordenes() {
+        this.ordenes.forEach((orden) => {
+            console.log(orden.toString());
+        });
+    }
+    ;
+    calcular_total() {
+        let precio_unitarios = this.ordenes.map((valor) => {
+            return valor.valor_detalle;
+        });
+        return precio_unitarios.reduce((a, b) => {
+            return a + b;
+        }, 0);
+    }
+}
 // Iniciando datos
-let tipos = [
-    { nombre: 'Familiar', precio: 25.00 },
-    { nombre: 'Mediana', precio: 15.00 },
-    { nombre: 'Pequeña', precio: 7.50 },
-];
-let arreglo_tipos = tipos.map((tipo) => {
-    return tipo.nombre + ` $${tipo.precio}`;
-});
 const AppendFile = (nombreArchivo, contenido, replace) => {
     // @ts-ignore
     return new Promise((resolve, reject) => {
@@ -62,48 +95,6 @@ GetData('DataBase/pizzas')
         pizzas.push(value);
     });
 });
-// Entidades
-class Cliente {
-}
-class Pizza {
-    constructor(tipo, size, precio) {
-        this.precio = 0.00;
-        this.precio = precio;
-        this.size = size;
-        this.tipo = tipo;
-    }
-}
-class Orden {
-    constructor(pizza, cantidad) {
-        this.valor_detalle = 0.0;
-        this.toString = () => {
-            let espacios = "            ";
-            return `${this.pizza.tipo}${espacios.substring(this.pizza.tipo.length)}${this.pizza.size}${espacios.substring(this.pizza.size.length)}${this.cantidad}${espacios.substring(String(this.cantidad).length)}${this.pizza.precio}`;
-        };
-        this.pizza = pizza;
-        this.cantidad = cantidad;
-        this.valor_detalle = this.cantidad * this.pizza.precio;
-    }
-}
-class Pedido {
-    constructor() {
-        this.ordenes = [];
-    }
-    mostrar_ordenes() {
-        this.ordenes.forEach((orden) => {
-            console.log(orden.toString());
-        });
-    }
-    ;
-    calcular_total() {
-        let precio_unitarios = this.ordenes.map((valor) => {
-            return valor.valor_detalle;
-        });
-        return precio_unitarios.reduce((a, b) => {
-            return a + b;
-        }, 0);
-    }
-}
 //---------------PREGUNTAS
 // preguntas del menu principal
 let preguntas_menu_principal = [
@@ -199,7 +190,7 @@ let preguntas_menu_secundario = [
         type: "list",
         name: "size",
         message: "Que tamaño",
-        choices: arreglo_tipos,
+        choices: ['Familiar $25', 'Mediana $15', 'Pequeña $7.5'],
     },
     {
         type: "input",
@@ -263,6 +254,7 @@ function menu_crud() {
                     pizzas.forEach((valor) => {
                         console.log(valor);
                     });
+                    menu_crud();
                     break;
                 case 'Modificar Tipos Pizzas':
                     inquirer
@@ -274,7 +266,7 @@ function menu_crud() {
                                 console.log('econtrado');
                                 array[index] = respuestas.nuevo;
                             }
-                            console.log(`${element},${respuestas.old}`);
+                            //console.log(`${element},${respuestas.old}`);
                         });
                         let contenido = '';
                         const pizza$ = rxjs.from(pizzas);
@@ -297,13 +289,13 @@ function menu_crud() {
                     inquirer
                         .prompt(pregunta_eliminar)
                         .then((respuestas) => {
-                        //buscar y reemplazar
+                        //buscar y borrar
                         pizzas.forEach((element, index, array) => {
                             if (element == String(respuestas.borrar)) {
                                 console.log('econtrado');
                                 array[index] = '';
                             }
-                            console.log(`${element},${respuestas.borrar}`);
+                            //console.log(`${element},${respuestas.borrar}`);
                         });
                         let contenido = '';
                         const pizza$ = rxjs.from(pizzas);

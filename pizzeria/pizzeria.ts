@@ -2,101 +2,7 @@ declare var require:any;
 var inquirer = require('inquirer');
 const rxjs = require('rxjs');
 const fs = require('fs');
-const map = require('rxjs/operators').map;
-const reduce = require('rxjs/operators').reduce;
 
-// Iniciando datos
-let tipos =[
-{nombre:'Familiar',precio:25.00},
-{nombre:'Mediana',precio:15.00},
-{nombre:'Pequeña',precio:7.50},
-];
-
-let arreglo_tipos = tipos.map(
-    (tipo)=>{
-        return tipo.nombre+` $${tipo.precio}`
-    }
-);
-
-
-
-const AppendFile = (nombreArchivo, contenido,replace?:boolean)=>{
-    // @ts-ignore
-    return  new Promise(
-        (resolve,reject) => {
-
-            fs.readFile(
-                nombreArchivo,
-                'utf-8',
-                (error,contenidoArchivo) => {
-                    if (error) {
-                        fs.writeFile(
-                            nombreArchivo,
-                            contenido,
-                            (error)=>{
-                                if (error){
-                                    reject(error);
-                                }else {
-                                    resolve(contenido)
-                                }
-                            }
-                        );
-
-                    } else {
-                        fs.writeFile(
-                            nombreArchivo,
-                            //contenidoArchivo+contenido,
-                            replace == true? contenido:contenidoArchivo+contenido,
-                            (error)=>{
-                                if (error){
-                                    reject(error);
-                                }else {
-                                    resolve(contenido)
-                                }
-                            }
-                        );
-                    }
-                }
-            );
-
-        }
-    );
-}
-// Cargar datos
-const GetData  = (nombreArchivo)=>{
-    // @ts-ignore
-    return new Promise(
-        (resolve,reject)=>{
-            fs.readFile(
-                nombreArchivo,
-                'utf-8',
-                (error,contenidoArchivo) => {
-                       if (error){
-                           reject(error);
-                       }else {
-                           resolve(contenidoArchivo)
-                       }
-                }
-            );
-        }
-    )
-};
-let pizzas=[];
-GetData('DataBase/pizzas')
-    .then(
-        (contenido)=>{
-
-            String(contenido).split(",").forEach(
-                (value)=>{
-                    pizzas.push(value);
-                }
-            )
-
-        }
-    );
-
-
-// Entidades
 
 class Cliente{
     nombre:string;
@@ -147,10 +53,10 @@ class Pedido{
     calcular_total(){
         let precio_unitarios=this.ordenes.map(
             (valor)=>{
-                        return valor.valor_detalle
-                    }
+                return valor.valor_detalle
+            }
 
-        )
+        );
         return precio_unitarios.reduce(
             (a,b)=>{
                 return a+b;
@@ -158,6 +64,85 @@ class Pedido{
         )
     }
 }
+
+
+
+// Iniciando datos
+
+const AppendFile = (nombreArchivo, contenido,replace?:boolean)=>{
+    // @ts-ignore
+    return  new Promise(
+        (resolve,reject) => {
+
+            fs.readFile(
+                nombreArchivo,
+                'utf-8',
+                (error,contenidoArchivo) => {
+                    if (error) {
+                        fs.writeFile(
+                            nombreArchivo,
+                            contenido,
+                            (error)=>{
+                                if (error){
+                                    reject(error);
+                                }else {
+                                    resolve(contenido)
+                                }
+                            }
+                        );
+
+                    } else {
+                        fs.writeFile(
+                            nombreArchivo,
+                            //contenidoArchivo+contenido,
+                            replace == true? contenido:contenidoArchivo+contenido,
+                            (error)=>{
+                                if (error){
+                                    reject(error);
+                                }else {
+                                    resolve(contenido)
+                                }
+                            }
+                        );
+                    }
+                }
+            );
+
+        }
+    );
+};
+// Cargar datos
+const GetData  = (nombreArchivo)=>{
+    // @ts-ignore
+    return new Promise(
+        (resolve,reject)=>{
+            fs.readFile(
+                nombreArchivo,
+                'utf-8',
+                (error,contenidoArchivo) => {
+                       if (error){
+                           reject(error);
+                       }else {
+                           resolve(contenidoArchivo)
+                       }
+                }
+            );
+        }
+    )
+};
+let pizzas=[];
+GetData('DataBase/pizzas')
+    .then(
+        (contenido)=>{
+
+            String(contenido).split(",").forEach(
+                (value)=>{
+                    pizzas.push(value);
+                }
+            )
+
+        }
+    );
 
 
 //---------------PREGUNTAS
@@ -269,7 +254,7 @@ let preguntas_menu_secundario = [
         type: "list",
         name: "size",
         message: "Que tamaño",
-        choices: arreglo_tipos,
+        choices: ['Familiar $25','Mediana $15','Pequeña $7.5'],
     },
     {
         type: "input",
@@ -288,8 +273,6 @@ let preguntas_menu_secundario = [
     },
 
 ];
-
-
 
 
 // Ejecutar menu_principal
@@ -345,6 +328,7 @@ function menu_crud(){
                                         console.log(valor)
                                 }
                             );
+                            menu_crud();
                             break;
                         case 'Modificar Tipos Pizzas':
                             inquirer
@@ -359,7 +343,7 @@ function menu_crud(){
                                                 console.log('econtrado');
                                                 array[index]= respuestas.nuevo
                                             }
-                                            console.log(`${element},${respuestas.old}`);
+                                            //console.log(`${element},${respuestas.old}`);
                                         });
                                         let contenido:string='';
                                         const pizza$ = rxjs.from(pizzas);
@@ -391,7 +375,7 @@ function menu_crud(){
                                 .prompt(pregunta_eliminar)
                                 .then(
                                     (respuestas) => {
-                                        //buscar y reemplazar
+                                        //buscar y borrar
 
                                         pizzas.forEach((element,index,array) => {
 
@@ -399,7 +383,7 @@ function menu_crud(){
                                                 console.log('econtrado');
                                                 array[index]='';
                                             }
-                                            console.log(`${element},${respuestas.borrar}`);
+                                            //console.log(`${element},${respuestas.borrar}`);
                                         });
                                         let contenido:string='';
                                         const pizza$ = rxjs.from(pizzas);
@@ -436,6 +420,7 @@ function menu_crud(){
                                         pizzas.push(respuestas.insert);
                                         let contenido:string='';
                                         const pizza$ = rxjs.from(pizzas);
+
                                         pizza$
                                             .subscribe(
                                                 (ok)=>{
