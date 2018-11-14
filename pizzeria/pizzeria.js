@@ -1,8 +1,6 @@
 var inquirer = require('inquirer');
 const rxjs = require('rxjs');
 const fs = require('fs');
-const map = require('rxjs/operators').map;
-const reduce = require('rxjs/operators').reduce;
 class Cliente {
 }
 class Pizza {
@@ -222,7 +220,7 @@ function iniciar() {
                     menu_crud();
                 }
                 else {
-                    console.log(respuestas.clave);
+                    console.log('Error en el login');
                     iniciar();
                 }
             });

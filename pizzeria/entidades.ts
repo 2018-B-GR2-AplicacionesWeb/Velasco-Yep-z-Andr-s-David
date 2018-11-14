@@ -1,10 +1,10 @@
-class Cliente{
+export  class Cliente{
     nombre:string;
     email:string;
 }
 
 
-class Pizza{
+export  class Pizza{
     tipo:string;
     size:string;
     precio=0.00;
@@ -15,7 +15,7 @@ class Pizza{
     }
 }
 
-class Orden{
+export  class Orden{
     pizza:Pizza;
     cantidad;
     valor_detalle=0.0;
@@ -30,7 +30,7 @@ class Orden{
     }
 }
 
-class Pedido{
+export class Pedido{
     cliente:Cliente;
     ordenes:Orden[]=[];
     mostrar_ordenes(){

@@ -4,6 +4,9 @@ const rxjs = require('rxjs');
 const fs = require('fs');
 
 
+import * as entidaes from './entidades';
+
+
 class Cliente{
     nombre:string;
     email:string;
@@ -289,7 +292,7 @@ function iniciar() {
                                 if (respuestas.clave) {
                                     menu_crud();
                                 }else {
-                                    console.log(respuestas.clave);
+                                    console.log('Error en el login');
                                     iniciar();
                                 }
                             }
