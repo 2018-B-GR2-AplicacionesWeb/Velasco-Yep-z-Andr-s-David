@@ -7,68 +7,6 @@ var Cliente = require('./entidades').Cliente;
 var Pizza = require('./entidades').Pizza;
 var Orden = require('./entidades').Orden;
 var Pedido = require('./entidades').Pedido;
-/*
-class Cliente{
-    nombre:string;
-    email:string;
-}
-
-
-class Pizza{
-    tipo:string;
-    size:string;
-    precio=0.00;
-    constructor(tipo:string,size:string,precio){
-        this.precio = precio;
-        this.size = size;
-        this.tipo = tipo;
-    }
-}
-
-class Orden{
-    pizza:Pizza;
-    cantidad;
-    valor_detalle=0.0;
-    constructor(pizza:Pizza,cantidad:Number) {
-        this.pizza = pizza;
-        this.cantidad=cantidad;
-        this.valor_detalle=this.cantidad*this.pizza.precio;
-    }
-    public toString = () : string => {
-        let espacios:string = "            ";
-        return `${this.pizza.tipo}${espacios.substring(this.pizza.tipo.length)}${this.pizza.size}${espacios.substring(this.pizza.size.length)}${this.cantidad}${espacios.substring(String(this.cantidad).length)}${this.pizza.precio}`;
-    }
-}
-
-class Pedido{
-    cliente:Cliente;
-    ordenes:Orden[]=[];
-    mostrar_ordenes(){
-        this.ordenes.forEach(
-
-            (orden)=>{
-
-                console.log(orden.toString())
-
-
-            }
-        );
-    };
-    calcular_total(){
-        let precio_unitarios=this.ordenes.map(
-            (valor)=>{
-                return valor.valor_detalle
-            }
-
-        );
-        return precio_unitarios.reduce(
-            (a,b)=>{
-                return a+b;
-            },0
-        )
-    }
-}
-*/
 // Iniciando datos
 var AppendFile = function (nombreArchivo, contenido, replace) {
     // @ts-ignore
@@ -166,7 +104,7 @@ var preguntas_crud = [
         type: "list",
         name: "crud_op",
         message: "Que desea hacer",
-        choices: ['Consultar Tipos Pizzas', 'Modificar Tipos Pizzas', 'Eliminar Pizzas', 'Ingresar Pizza', 'salir\n'],
+        choices: ['Consultar Tipos Pizzas', 'Modificar Tipos Pizzas', 'Eliminar Pizzas', 'Ingresar Pizza', 'Consultar Pedidos', 'Salir\n'],
         validate: function (respuesta) {
             if (respuesta.crud_op == 'salir') {
                 return false;
@@ -339,6 +277,15 @@ function menu_crud() {
                         });
                     });
                     break;
+                case 'Consultar Pedidos':
+                    GetData('DataBase/facturas')
+                        .then(function (contenido) {
+                        String(contenido).split(",").forEach(function (value) {
+                            console.log(value);
+                        });
+                    });
+                    menu_crud();
+                    break;
             }
         }
     });
@@ -365,14 +312,22 @@ function pedir_pizza(pedido) {
             pedir_pizza(pedido);
         }
         else {
-            console.log('+-------------------------------------------------+' +
-                '\nDetalle del pedido\n' +
+            var factura = '+-------------------------------------------------+\n' +
+                'Detalle del pedido\n' +
+                ("Fecha: " + pedido.fecha.toISOString() + "\n") +
                 '+-------------------------------------------------+\n' +
                 'Pizza       Tamaño      Cantidad    Precio Unitario\n' +
-                '+-------------------------------------------------+');
-            pedido.mostrar_ordenes();
-            console.log("+-------------------------------------------------+");
-            console.log("Total: $", pedido.calcular_total());
+                '+-------------------------------------------------+\n' +
+                pedido.mostrar_ordenes() +
+                "+-------------------------------------------------+\n" +
+                ("Total: " + pedido.calcular_total() + "\n") +
+                '###################################################\n';
+            console.log(factura);
+            AppendFile('DataBase/facturas', factura, false)
+                .then(function () {
+                console.log('contenido actualizado');
+                menu_crud();
+            });
         }
     });
 }

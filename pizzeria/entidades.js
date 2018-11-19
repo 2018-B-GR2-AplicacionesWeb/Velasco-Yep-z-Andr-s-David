@@ -34,11 +34,15 @@ exports.Orden = Orden;
 var Pedido = /** @class */ (function () {
     function Pedido() {
         this.ordenes = [];
+        this.fecha = new Date();
     }
     Pedido.prototype.mostrar_ordenes = function () {
+        var contenido = "";
         this.ordenes.forEach(function (orden) {
-            console.log(orden.toString());
+            contenido += orden.toString() + '\n';
+            //console.log(orden.toString())
         });
+        return contenido;
     };
     ;
     Pedido.prototype.calcular_total = function () {
