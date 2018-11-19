@@ -1,54 +1,81 @@
+//import {Observable} from "rxjs";
 var inquirer = require('inquirer');
-const rxjs = require('rxjs');
-const fs = require('fs');
-class Cliente {
+var rxjs = require('rxjs');
+var fs = require('fs');
+var map = require('rxjs/operators').map;
+var Cliente = require('./entidades').Cliente;
+var Pizza = require('./entidades').Pizza;
+var Orden = require('./entidades').Orden;
+var Pedido = require('./entidades').Pedido;
+/*
+class Cliente{
+    nombre:string;
+    email:string;
 }
-class Pizza {
-    constructor(tipo, size, precio) {
-        this.precio = 0.00;
+
+
+class Pizza{
+    tipo:string;
+    size:string;
+    precio=0.00;
+    constructor(tipo:string,size:string,precio){
         this.precio = precio;
         this.size = size;
         this.tipo = tipo;
     }
 }
-class Orden {
-    constructor(pizza, cantidad) {
-        this.valor_detalle = 0.0;
-        this.toString = () => {
-            let espacios = "            ";
-            return `${this.pizza.tipo}${espacios.substring(this.pizza.tipo.length)}${this.pizza.size}${espacios.substring(this.pizza.size.length)}${this.cantidad}${espacios.substring(String(this.cantidad).length)}${this.pizza.precio}`;
-        };
+
+class Orden{
+    pizza:Pizza;
+    cantidad;
+    valor_detalle=0.0;
+    constructor(pizza:Pizza,cantidad:Number) {
         this.pizza = pizza;
-        this.cantidad = cantidad;
-        this.valor_detalle = this.cantidad * this.pizza.precio;
+        this.cantidad=cantidad;
+        this.valor_detalle=this.cantidad*this.pizza.precio;
+    }
+    public toString = () : string => {
+        let espacios:string = "            ";
+        return `${this.pizza.tipo}${espacios.substring(this.pizza.tipo.length)}${this.pizza.size}${espacios.substring(this.pizza.size.length)}${this.cantidad}${espacios.substring(String(this.cantidad).length)}${this.pizza.precio}`;
     }
 }
-class Pedido {
-    constructor() {
-        this.ordenes = [];
-    }
-    mostrar_ordenes() {
-        this.ordenes.forEach((orden) => {
-            console.log(orden.toString());
-        });
-    }
-    ;
-    calcular_total() {
-        let precio_unitarios = this.ordenes.map((valor) => {
-            return valor.valor_detalle;
-        });
-        return precio_unitarios.reduce((a, b) => {
-            return a + b;
-        }, 0);
+
+class Pedido{
+    cliente:Cliente;
+    ordenes:Orden[]=[];
+    mostrar_ordenes(){
+        this.ordenes.forEach(
+
+            (orden)=>{
+
+                console.log(orden.toString())
+
+
+            }
+        );
+    };
+    calcular_total(){
+        let precio_unitarios=this.ordenes.map(
+            (valor)=>{
+                return valor.valor_detalle
+            }
+
+        );
+        return precio_unitarios.reduce(
+            (a,b)=>{
+                return a+b;
+            },0
+        )
     }
 }
+*/
 // Iniciando datos
-const AppendFile = (nombreArchivo, contenido, replace) => {
+var AppendFile = function (nombreArchivo, contenido, replace) {
     // @ts-ignore
-    return new Promise((resolve, reject) => {
-        fs.readFile(nombreArchivo, 'utf-8', (error, contenidoArchivo) => {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(nombreArchivo, 'utf-8', function (error, contenidoArchivo) {
             if (error) {
-                fs.writeFile(nombreArchivo, contenido, (error) => {
+                fs.writeFile(nombreArchivo, contenido, function (error) {
                     if (error) {
                         reject(error);
                     }
@@ -60,7 +87,7 @@ const AppendFile = (nombreArchivo, contenido, replace) => {
             else {
                 fs.writeFile(nombreArchivo, 
                 //contenidoArchivo+contenido,
-                replace == true ? contenido : contenidoArchivo + contenido, (error) => {
+                replace == true ? contenido : contenidoArchivo + contenido, function (error) {
                     if (error) {
                         reject(error);
                     }
@@ -73,10 +100,10 @@ const AppendFile = (nombreArchivo, contenido, replace) => {
     });
 };
 // Cargar datos
-const GetData = (nombreArchivo) => {
+var GetData = function (nombreArchivo) {
     // @ts-ignore
-    return new Promise((resolve, reject) => {
-        fs.readFile(nombreArchivo, 'utf-8', (error, contenidoArchivo) => {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(nombreArchivo, 'utf-8', function (error, contenidoArchivo) {
             if (error) {
                 reject(error);
             }
@@ -86,16 +113,16 @@ const GetData = (nombreArchivo) => {
         });
     });
 };
-let pizzas = [];
+var pizzas = [];
 GetData('DataBase/pizzas')
-    .then((contenido) => {
-    String(contenido).split(",").forEach((value) => {
+    .then(function (contenido) {
+    String(contenido).split(",").forEach(function (value) {
         pizzas.push(value);
     });
 });
 //---------------PREGUNTAS
 // preguntas del menu principal
-let preguntas_menu_principal = [
+var preguntas_menu_principal = [
     {
         type: "list",
         name: "opciones",
@@ -103,24 +130,24 @@ let preguntas_menu_principal = [
         choices: [
             "Ordenar pizza",
             "Salir",
-        ],
+        ]
     },
 ];
 // Preguntas del menu secundario
-let preguntas_login = [
+var preguntas_login = [
     {
         type: "list",
         name: "sesion",
         message: "Entrar como:",
         choices: ['Administrador', 'Cliente'],
-        filter: (val) => { return val.toLowerCase(); }
+        filter: function (val) { return val.toLowerCase(); }
     },
 ];
-let preguntas_login_administrador = [
+var preguntas_login_administrador = [
     {
         type: 'input',
         name: 'nickname',
-        message: "nickname",
+        message: "nickname"
     },
     {
         type: 'password',
@@ -134,13 +161,13 @@ let preguntas_login_administrador = [
         }
     },
 ];
-let preguntas_crud = [
+var preguntas_crud = [
     {
         type: "list",
         name: "crud_op",
         message: "Que desea hacer",
-        choices: ['Consultar Tipos Pizzas', 'Modificar Tipos Pizzas', 'Eliminar Pizzas', 'Ingresar Pizza', 'salir'],
-        validate: (respuesta) => {
+        choices: ['Consultar Tipos Pizzas', 'Modificar Tipos Pizzas', 'Eliminar Pizzas', 'Ingresar Pizza', 'salir\n'],
+        validate: function (respuesta) {
             if (respuesta.crud_op == 'salir') {
                 return false;
             }
@@ -150,7 +177,7 @@ let preguntas_crud = [
         }
     }
 ];
-let pregunta_actualizar = [
+var pregunta_actualizar = [
     {
         type: 'input',
         name: "old",
@@ -162,33 +189,33 @@ let pregunta_actualizar = [
         message: "Ingrese el nuevo tipo de pizza para reemplazar?"
     }
 ];
-let pregunta_eliminar = [
+var pregunta_eliminar = [
     {
         type: "input",
         name: 'borrar',
-        message: "Ingrese tipo de pizza a eliminar?",
+        message: "Ingrese tipo de pizza a eliminar?"
     }
 ];
-let pregunta_insertar = [
+var pregunta_insertar = [
     {
         type: "input",
         name: 'insert',
-        message: "Ingrese tipo de pizza a insertar?",
+        message: "Ingrese tipo de pizza a insertar?"
     }
 ];
-let preguntas_menu_secundario = [
+var preguntas_menu_secundario = [
     {
         type: "list",
         name: "clase",
         message: "Que clase de pizza",
         choices: pizzas,
-        filter: (val) => { return val.toLowerCase(); }
+        filter: function (val) { return val.toLowerCase(); }
     },
     {
         type: "list",
         name: "size",
         message: "Que tamaño",
-        choices: ['Familiar $25', 'Mediana $15', 'Pequeña $7.5'],
+        choices: ['Familiar $25', 'Mediana $15', 'Pequeña $7.5']
     },
     {
         type: "input",
@@ -203,19 +230,19 @@ let preguntas_menu_secundario = [
     {
         type: "confirm",
         name: "seguir",
-        message: "Desea algo mas?",
+        message: "Desea algo mas?"
     },
 ];
 // Ejecutar menu_principal
 function iniciar() {
     inquirer
         .prompt(preguntas_login)
-        .then((respuestas) => {
+        .then(function (respuestas) {
         if (respuestas.sesion == 'administrador') {
             // Menu administrador
             inquirer
                 .prompt(preguntas_login_administrador)
-                .then((respuestas) => {
+                .then(function (respuestas) {
                 if (respuestas.clave) {
                     menu_crud();
                 }
@@ -228,10 +255,10 @@ function iniciar() {
         else {
             inquirer
                 .prompt(preguntas_menu_principal)
-                .then((respuestas) => {
+                .then(function (respuestas) {
                 if (respuestas.opciones != 'Salir') {
                     console.log('Eliga una pizza del menu:');
-                    let pedido = new Pedido();
+                    var pedido = new Pedido();
                     pedir_pizza(pedido);
                 }
             });
@@ -241,7 +268,7 @@ function iniciar() {
 function menu_crud() {
     inquirer
         .prompt(preguntas_crud)
-        .then((respuestas) => {
+        .then(function (respuestas) {
         if (respuestas.crud_op === 'salir') {
             console.log(respuestas.clave);
             iniciar();
@@ -249,108 +276,90 @@ function menu_crud() {
         else {
             switch (respuestas.crud_op) {
                 case 'Consultar Tipos Pizzas':
-                    pizzas.forEach((valor) => {
-                        console.log(valor);
+                    GetData('DataBase/pizzas')
+                        .then(function (contenido) {
+                        String(contenido).split(",").forEach(function (value) {
+                            console.log(value);
+                        });
                     });
                     menu_crud();
                     break;
                 case 'Modificar Tipos Pizzas':
                     inquirer
                         .prompt(pregunta_actualizar)
-                        .then((respuestas) => {
+                        .then(function (respuestas) {
                         //buscar y reemplazar
-                        pizzas.forEach((element, index, array) => {
-                            if (element == String(respuestas.old)) {
-                                console.log('econtrado');
-                                array[index] = respuestas.nuevo;
-                            }
-                            //console.log(`${element},${respuestas.old}`);
-                        });
-                        let contenido = '';
-                        const pizza$ = rxjs.from(pizzas);
+                        var pizza$ = rxjs.from(pizzas);
                         pizza$
-                            .subscribe((ok) => {
-                            contenido = contenido + ok + ",";
-                        }, (error) => {
-                            console.log("error:", error);
-                        }, () => {
+                            .pipe(map(function (value) {
+                            //console.log(value,respuestas.old);
+                            if (value == respuestas.old) {
+                                pizzas[pizzas.indexOf(value)] = respuestas.nuevo;
+                                return pizzas;
+                            }
+                        }))
+                            .subscribe(function (ok) { }, function (error) { console.log("error:", error); }, function () {
                             // volver a actualizar la base
-                            AppendFile('DataBase/pizzas', contenido, true)
-                                .then(() => {
-                                console.log('contenido actualizado');
-                                menu_crud();
-                            });
+                            refreshDb();
                         });
                     });
                     break;
                 case 'Eliminar Pizzas':
                     inquirer
                         .prompt(pregunta_eliminar)
-                        .then((respuestas) => {
+                        .then(function (respuestas) {
                         //buscar y borrar
-                        pizzas.forEach((element, index, array) => {
-                            if (element == String(respuestas.borrar)) {
-                                console.log('econtrado');
-                                array[index] = '';
-                            }
-                            //console.log(`${element},${respuestas.borrar}`);
-                        });
-                        let contenido = '';
-                        const pizza$ = rxjs.from(pizzas);
+                        var contenido = '';
+                        var pizza$ = rxjs.from(pizzas);
                         pizza$
-                            .subscribe((ok) => {
-                            if (ok) {
-                                contenido = contenido + ok + ",";
+                            .pipe(map(function (value) {
+                            if (value == respuestas.borrar) {
+                                pizzas.splice(pizzas.indexOf(value), 1);
+                                return pizzas;
                             }
-                        }, (error) => {
+                        }))
+                            .subscribe(function (ok) { }, function (error) {
                             console.log("error:", error);
-                        }, () => {
+                        }, function () {
                             // volver a actualizar la base
-                            AppendFile('DataBase/pizzas', contenido, true)
-                                .then(() => {
-                                console.log('contenido actualizado');
-                                menu_crud();
-                            });
+                            refreshDb();
                         });
                     });
                     break;
                 case 'Ingresar Pizza':
                     inquirer
                         .prompt(pregunta_insertar)
-                        .then((respuestas) => {
+                        .then(function (respuestas) {
                         pizzas.push(respuestas.insert);
-                        let contenido = '';
-                        const pizza$ = rxjs.from(pizzas);
+                        var pizza$ = rxjs.from(pizzas);
                         pizza$
-                            .subscribe((ok) => {
-                            if (ok) {
-                                contenido = contenido + ok + ",";
-                            }
-                        }, (error) => {
-                            console.log("error:", error);
-                        }, () => {
+                            .subscribe(function (ok) { }, function (error) { console.log("error:", error); }, function () {
                             // volver a actualizar la base
-                            AppendFile('DataBase/pizzas', contenido, true)
-                                .then(() => {
-                                console.log('contenido actualizado');
-                                menu_crud();
-                            });
+                            refreshDb();
                         });
                     });
                     break;
             }
-            //menu_crud();
         }
+    });
+}
+function refreshDb() {
+    var contenido = '';
+    contenido = String(pizzas);
+    AppendFile('DataBase/pizzas', contenido, true)
+        .then(function () {
+        console.log('contenido actualizado');
+        menu_crud();
     });
 }
 function pedir_pizza(pedido) {
     inquirer
         .prompt(preguntas_menu_secundario)
-        .then((respuestas) => {
-        let size = respuestas.size.split(" $")[0];
-        let precio = parseFloat(respuestas.size.split("$")[1]);
-        let pizza = new Pizza(respuestas.clase, size, precio);
-        let cantidad = respuestas.cantidad;
+        .then(function (respuestas) {
+        var size = respuestas.size.split(" $")[0];
+        var precio = parseFloat(respuestas.size.split("$")[1]);
+        var pizza = new Pizza(respuestas.clase, size, precio);
+        var cantidad = respuestas.cantidad;
         pedido.ordenes.push(new Orden(pizza, cantidad));
         if (respuestas.seguir) {
             pedir_pizza(pedido);

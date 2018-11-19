@@ -1,74 +1,14 @@
+//import {Observable} from "rxjs";
+
 declare var require:any;
 var inquirer = require('inquirer');
 const rxjs = require('rxjs');
 const fs = require('fs');
-
-
-import * as entidaes from './entidades';
-
-
-class Cliente{
-    nombre:string;
-    email:string;
-}
-
-
-class Pizza{
-    tipo:string;
-    size:string;
-    precio=0.00;
-    constructor(tipo:string,size:string,precio){
-        this.precio = precio;
-        this.size = size;
-        this.tipo = tipo;
-    }
-}
-
-class Orden{
-    pizza:Pizza;
-    cantidad;
-    valor_detalle=0.0;
-    constructor(pizza:Pizza,cantidad:Number) {
-        this.pizza = pizza;
-        this.cantidad=cantidad;
-        this.valor_detalle=this.cantidad*this.pizza.precio;
-    }
-    public toString = () : string => {
-        let espacios:string = "            ";
-        return `${this.pizza.tipo}${espacios.substring(this.pizza.tipo.length)}${this.pizza.size}${espacios.substring(this.pizza.size.length)}${this.cantidad}${espacios.substring(String(this.cantidad).length)}${this.pizza.precio}`;
-    }
-}
-
-class Pedido{
-    cliente:Cliente;
-    ordenes:Orden[]=[];
-    mostrar_ordenes(){
-        this.ordenes.forEach(
-
-            (orden)=>{
-
-                console.log(orden.toString())
-
-
-            }
-        );
-    };
-    calcular_total(){
-        let precio_unitarios=this.ordenes.map(
-            (valor)=>{
-                return valor.valor_detalle
-            }
-
-        );
-        return precio_unitarios.reduce(
-            (a,b)=>{
-                return a+b;
-            },0
-        )
-    }
-}
-
-
+const map = require('rxjs/operators').map;
+const Cliente = require('./entidades').Cliente;
+const Pizza = require('./entidades').Pizza;
+const Orden = require('./entidades').Orden;
+const Pedido = require('./entidades').Pedido;
 
 // Iniciando datos
 
@@ -134,18 +74,20 @@ const GetData  = (nombreArchivo)=>{
     )
 };
 let pizzas=[];
+
 GetData('DataBase/pizzas')
-    .then(
-        (contenido)=>{
+        .then(
+            (contenido) => {
 
-            String(contenido).split(",").forEach(
-                (value)=>{
-                    pizzas.push(value);
-                }
-            )
+                String(contenido).split(",").forEach(
+                    (value) => {
+                        pizzas.push(value);
+                    }
+                )
 
-        }
-    );
+            }
+        );
+
 
 
 //---------------PREGUNTAS
@@ -202,7 +144,7 @@ let preguntas_crud = [
         type:"list",
         name:"crud_op",
         message:"Que desea hacer",
-        choices: ['Consultar Tipos Pizzas','Modificar Tipos Pizzas','Eliminar Pizzas','Ingresar Pizza','salir'],
+        choices: ['Consultar Tipos Pizzas','Modificar Tipos Pizzas','Eliminar Pizzas','Ingresar Pizza','salir\n'],
         validate:(respuesta)=>{
             if(respuesta.crud_op=='salir'){
                 return false;
@@ -326,11 +268,20 @@ function menu_crud(){
                 } else {
                     switch (respuestas.crud_op) {
                         case 'Consultar Tipos Pizzas':
-                            pizzas.forEach(
-                                (valor)=>{
-                                        console.log(valor)
-                                }
-                            );
+
+                            GetData('DataBase/pizzas')
+                                .then(
+                                    (contenido) => {
+
+                                        String(contenido).split(",").forEach(
+                                            (value) => {
+                                                console.log(value);
+                                            }
+                                        )
+
+                                    }
+                                );
+
                             menu_crud();
                             break;
                         case 'Modificar Tipos Pizzas':
@@ -339,35 +290,26 @@ function menu_crud(){
                                 .then(
                                     (respuestas) => {
                                         //buscar y reemplazar
-
-                                        pizzas.forEach((element,index,array) => {
-
-                                            if (element == String(respuestas.old)) {
-                                                console.log('econtrado');
-                                                array[index]= respuestas.nuevo
-                                            }
-                                            //console.log(`${element},${respuestas.old}`);
-                                        });
-                                        let contenido:string='';
                                         const pizza$ = rxjs.from(pizzas);
                                         pizza$
+                                            .pipe(
+                                                map(
+                                                    (value)=>{
+                                                                //console.log(value,respuestas.old);
+                                                                if (value == respuestas.old) {
+                                                                    pizzas[pizzas.indexOf(value)] = respuestas.nuevo;
+                                                                    return pizzas
+                                                                }
+
+                                                    }
+                                               )
+                                            )
                                             .subscribe(
-                                                (ok)=>{
-                                                    contenido=contenido+ok+",";
-                                                },
-                                                (error)=>{
-                                                    console.log("error:",error)
-                                                },
+                                                (ok)=>{},
+                                                (error)=>{console.log("error:",error)},
                                                 ()=>{
                                                     // volver a actualizar la base
-                                                    AppendFile('DataBase/pizzas',contenido,true)
-                                                        .then(
-                                                            ()=>{
-                                                                console.log('contenido actualizado')
-                                                                menu_crud();
-                                                            }
-                                                        );
-
+                                                    refreshDb();
                                                 }
                                             )
                                     }
@@ -380,38 +322,30 @@ function menu_crud(){
                                     (respuestas) => {
                                         //buscar y borrar
 
-                                        pizzas.forEach((element,index,array) => {
-
-                                            if (element == String(respuestas.borrar)) {
-                                                console.log('econtrado');
-                                                array[index]='';
-                                            }
-                                            //console.log(`${element},${respuestas.borrar}`);
-                                        });
                                         let contenido:string='';
                                         const pizza$ = rxjs.from(pizzas);
                                         pizza$
-                                            .subscribe(
-                                                (ok)=>{
-                                                    if (ok) {
-                                                        contenido = contenido + ok + ",";
+                                            .pipe(
+                                                map(
+                                                    (value)=>{
+                                                        if (value == respuestas.borrar) {
+                                                            pizzas.splice(pizzas.indexOf(value),1);
+                                                            return pizzas
+                                                        }
                                                     }
-                                                },
+                                                )
+                                            )
+                                            .subscribe(
+                                                (ok)=>{},
                                                 (error)=>{
                                                     console.log("error:",error)
                                                 },
                                                 ()=>{
                                                     // volver a actualizar la base
-                                                    AppendFile('DataBase/pizzas',contenido,true)
-                                                        .then(
-                                                            ()=>{
-                                                                console.log('contenido actualizado')
-                                                                menu_crud();
-                                                            }
-                                                        );
+                                                    refreshDb();
 
                                                 }
-                                            )
+                                            );
                                     }
                                 );
                             break;
@@ -421,28 +355,14 @@ function menu_crud(){
                                 .then(
                                     (respuestas) => {
                                         pizzas.push(respuestas.insert);
-                                        let contenido:string='';
                                         const pizza$ = rxjs.from(pizzas);
-
                                         pizza$
                                             .subscribe(
-                                                (ok)=>{
-                                                    if (ok) {
-                                                        contenido = contenido + ok + ",";
-                                                    }
-                                                },
-                                                (error)=>{
-                                                    console.log("error:",error)
-                                                },
+                                                (ok)=>{},
+                                                (error)=>{console.log("error:",error)},
                                                 ()=>{
                                                     // volver a actualizar la base
-                                                    AppendFile('DataBase/pizzas',contenido,true)
-                                                        .then(
-                                                            ()=>{
-                                                                console.log('contenido actualizado')
-                                                                menu_crud();
-                                                            }
-                                                        );
+                                                    refreshDb();
 
                                                 }
                                             )
@@ -451,7 +371,6 @@ function menu_crud(){
                             break;
                     }
 
-                    //menu_crud();
                 }
 
             }
@@ -459,7 +378,18 @@ function menu_crud(){
 }
 
 
-function pedir_pizza(pedido:Pedido) {
+function refreshDb() {
+    let contenido:string='';
+    contenido=String(pizzas)
+    AppendFile('DataBase/pizzas',contenido,true)
+        .then(
+            ()=>{
+                console.log('contenido actualizado');
+                menu_crud();
+            }
+        );
+}
+function pedir_pizza(pedido) {
     inquirer
         .prompt(preguntas_menu_secundario)
         .then(
@@ -467,7 +397,7 @@ function pedir_pizza(pedido:Pedido) {
                 let size = respuestas.size.split(" $")[0];
                 let precio = parseFloat(respuestas.size.split("$")[1]);
                 let pizza = new Pizza(respuestas.clase,size,precio);
-                let cantidad = respuestas.cantidad
+                let cantidad = respuestas.cantidad;
                 pedido.ordenes.push(new Orden(pizza,cantidad));
 
                 if (respuestas.seguir){
@@ -477,7 +407,7 @@ function pedir_pizza(pedido:Pedido) {
                         '\nDetalle del pedido\n' +
                         '+-------------------------------------------------+\n'+
                         'Pizza       Tamaño      Cantidad    Precio Unitario\n' +
-                        '+-------------------------------------------------+')
+                        '+-------------------------------------------------+');
                     pedido.mostrar_ordenes();
                     console.log("+-------------------------------------------------+");
                     console.log("Total: $",pedido.calcular_total());
@@ -485,7 +415,5 @@ function pedir_pizza(pedido:Pedido) {
             }
         );
 }
-
-
 
 iniciar();
