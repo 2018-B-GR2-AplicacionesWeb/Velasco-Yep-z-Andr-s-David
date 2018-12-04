@@ -33,16 +33,20 @@ export  class Orden{
 export class Pedido{
     cliente:Cliente;
     ordenes:Orden[]=[];
+    fecha:Date;
+    constructor(){
+        this.fecha = new Date();
+    }
     mostrar_ordenes(){
+        let contenido:String="";
         this.ordenes.forEach(
-
             (orden)=>{
-
-                console.log(orden.toString())
-
-
+                contenido +=orden.toString()+'\n';
+                //console.log(orden.toString())
             }
+
         );
+        return contenido;
     };
     calcular_total(){
         let precio_unitarios=this.ordenes.map(

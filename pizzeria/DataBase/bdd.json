@@ -1,0 +1,27 @@
+{
+  "clientes":
+[
+  {"id":"1","nombre":"Andres"},
+  {"id":"2","nombre":"Pedro"},
+  {"id":"3","nombre":"Juan"},
+  {"id":"25","nombre":"Samantha"},
+  {"id":"35","nombre":"Peter"},
+  {"id":"87","nombre":"Rosa"},
+  {"id":"122","nombre":"Rodolfo"}
+],
+  "pizzas":
+  [
+    {"id":"1","nombre":"Napolitana"},
+    {"id":"2","nombre":"Pepperoni"},
+    {"id":"3","nombre":"Jamon"},
+    {"id":"4","nombre":"Hawaiana"},
+    {"id":"5","nombre":"Queso"},
+    {"id":"6","nombre":"Vegana"}
+  ],
+  "tipos":
+   [
+     {"id":"1","nombre":"familiar","precio":25.00},
+     {"id":"2","nombre":"mediana","precio":15.00},
+     {"id":"3","nombre":"pequeña","precio":5.00}
+     ]
+}

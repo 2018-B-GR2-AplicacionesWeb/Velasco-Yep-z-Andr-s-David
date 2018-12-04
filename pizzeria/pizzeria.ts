@@ -144,7 +144,7 @@ let preguntas_crud = [
         type:"list",
         name:"crud_op",
         message:"Que desea hacer",
-        choices: ['Consultar Tipos Pizzas','Modificar Tipos Pizzas','Eliminar Pizzas','Ingresar Pizza','salir\n'],
+        choices: ['Consultar Tipos Pizzas','Modificar Tipos Pizzas','Eliminar Pizzas','Ingresar Pizza','Consultar Pedidos','Salir\n'],
         validate:(respuesta)=>{
             if(respuesta.crud_op=='salir'){
                 return false;
@@ -218,7 +218,6 @@ let preguntas_menu_secundario = [
     },
 
 ];
-
 
 // Ejecutar menu_principal
 function iniciar() {
@@ -369,6 +368,22 @@ function menu_crud(){
                                     }
                                 );
                             break;
+                        case 'Consultar Pedidos':
+                            GetData('DataBase/facturas')
+                                .then(
+                                    (contenido) => {
+
+                                        String(contenido).split(",").forEach(
+                                            (value) => {
+                                                console.log(value);
+                                            }
+                                        )
+
+                                    }
+                                );
+                            menu_crud();
+                            break;
+
                     }
 
                 }
@@ -403,14 +418,24 @@ function pedir_pizza(pedido) {
                 if (respuestas.seguir){
                     pedir_pizza(pedido)
                 }else {
-                    console.log('+-------------------------------------------------+' +
-                        '\nDetalle del pedido\n' +
+                    let factura='+-------------------------------------------------+\n' +
+                        'Detalle del pedido\n'+
+                         `Fecha: ${pedido.fecha.toISOString()}\n`+
                         '+-------------------------------------------------+\n'+
                         'Pizza       Tamaño      Cantidad    Precio Unitario\n' +
-                        '+-------------------------------------------------+');
-                    pedido.mostrar_ordenes();
-                    console.log("+-------------------------------------------------+");
-                    console.log("Total: $",pedido.calcular_total());
+                        '+-------------------------------------------------+\n'+
+                        pedido.mostrar_ordenes()+
+                        "+-------------------------------------------------+\n"+
+                        `Total: ${pedido.calcular_total()}\n`+
+                        '###################################################\n';
+                    console.log(factura);
+                    AppendFile('DataBase/facturas',factura,false)
+                        .then(
+                            ()=>{
+                                console.log('contenido actualizado');
+                                menu_crud();
+                            }
+                        );
                 }
             }
         );
