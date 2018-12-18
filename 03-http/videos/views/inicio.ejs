@@ -1,0 +1,99 @@
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+
+
+<% const existeMensaje = typeof mensaje !== "undefined" ? true : false;%>
+
+<%if(existeMensaje){%>
+    <p>MENSAJE: <%= mensaje%></p>
+<%}%>
+
+<% var apellido = 'Eguez' %>
+<!-- h1 -> Header 1 -->
+<h1>  <%= nombre %> <%= apellido %>  </h1>
+<!-- p -> parrafo -->
+
+<!-- a -> anchor-->
+<a href="https://www.google.com" onclick="holaMundo(event)">Click</a>
+<script>
+    function holaMundo(event) {
+        console.log(event);
+        event.preventDefault();
+        console.log("Hola mundo")
+    }
+
+    function borrar(event) {
+        var respuesta = confirm("Quiere borrar")
+        if (!respuesta){
+            event.preventDefault()
+        }
+    }
+</script>
+
+<form method="get" action="/Usuario/inicio">
+    <div>
+        <label for="busqueda">Busqueda</label>
+        <input id="busqueda" name="busqueda" type="text">
+    </div>
+    <button type="submit" >Buscar</button>
+</form>
+
+<a href="/Usuario/crear-usuario">
+    <button>Crear Usuario</button>
+</a>
+
+
+
+
+
+<h2> Arreglo </h2>
+
+<!-- ul -> unordered list-->
+<!-- ol -> ordered list-->
+<!-- li -> list item -->
+<!--
+<ul>
+<% //arreglo.forEach((numero)=>{   %>
+    <li><%= // numero  %></li>
+<%   // })    %>
+</ul>
+-->
+
+
+<table>
+    <!-- tr -> table row -->
+    <tr>
+        <!-- th -> table header -->
+        <th>Nombre</th>
+        <th>Biografía</th>
+        <th>Acciones</th>
+    </tr>
+    <!-- tr -> table row -->
+    <% arreglo.forEach((usuario)=>{ %>
+        <tr>
+            <!-- td -> table detail -->
+            <td><%=usuario.nombre%></td>
+            <td><%=usuario.biografia%></td>
+            <td>
+                <form action="/Usuario/borrar/<%=usuario.id%>"
+                      method="post"
+                >
+                    <!--<button type="button">Yo no</button>-->
+                    <!--<button>Yo si</button>-->
+                    <button type="submit" onclick="borrar(event)">Eliminar</button>
+                </form>
+                <a href="/Usuario/actualizar-usuario/<%=usuario.id%>">
+                    <button>Actualizar</button>
+                </a>
+            </td>
+        </tr>
+    <% }) %>
+</table>
+
+
+
+
+
