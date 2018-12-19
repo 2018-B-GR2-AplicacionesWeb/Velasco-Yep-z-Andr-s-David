@@ -1,0 +1,48 @@
+<% var creando = typeof usuario === "undefined" ? true : false;%>
+
+<h1> <%= creando ? 'Crear' : 'Actualizar' %> Usuario</h1>
+<p><%= creando ? 'Creando' : 'Actualizando' %> un usuario.</p>
+<form   action="/Usuario/<%= creando ? 'crear' : 'actualizar' %>-usuario/<%= creando ? '' : usuario.id %>"
+        method="POST">
+    <div>
+        <label for="nombre">Nombre</label>
+        <input id="nombre"
+               value="<%= creando ? '' : usuario.nombre %>"
+               name="nombre" type="text">
+    </div>
+
+    <div>
+        <label for="apellido">Apellido</label>
+        <input id="apellido"
+               value="<%= creando ? '' : usuario.apellido %>"
+               name="apellido" type="text">
+    </div>
+
+    <div>
+        <label for="biografia">Biografía</label>
+        <textarea name="biografia"
+                  id="biografia"
+                  cols="30"
+                  rows="3"><%= creando ? '' : usuario.biografia %>
+        </textarea>
+    </div>
+    <button type="reset">Resetear formulario</button>
+    <button onclick="validadNombre(event)"><%= creando ? 'Crear' : 'Actualizar' %> Usuario</button>
+</form>
+
+<a href="/Usuario/inicio">
+    <button>Regresar</button>
+</a>
+
+
+<script>
+    function validadNombre(evento) {
+        //1. Revisar que el campo no este vacio
+        evento.preventDefault()
+        const inputNombre = document.getElementById("nombre")
+        console.log(inputNombre)
+        //2. Revisar que el campo tenga 3 caracteres
+        //3. Obtener el valor del campo
+
+    }
+</script>

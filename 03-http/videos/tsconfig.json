@@ -14,7 +14,8 @@
     "baseUrl": "./"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "../../proyecto/main.ts"
   ],
   "exclude": [
     "node_modules",
