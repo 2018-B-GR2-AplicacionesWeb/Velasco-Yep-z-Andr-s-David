@@ -1,9 +1,9 @@
-<% var creando = typeof usuario === "undefined" ? true : false;%>
+<% var creando = typeof usuario === "undefined" ? true : false; %>
 
 <h1> <%= creando ? 'Crear' : 'Actualizar' %> Usuario</h1>
 <p><%= creando ? 'Creando' : 'Actualizando' %> un usuario.</p>
-<form   action="/Usuario/<%= creando ? 'crear' : 'actualizar' %>-usuario/<%= creando ? '' : usuario.id %>"
-        method="POST">
+<form action="/Usuario/<%= creando ? 'crear' : 'actualizar' %>-usuario/<%= creando ? '' : usuario.id %>"
+      method="POST">
     <div>
         <label for="nombre">Nombre</label>
         <input id="nombre"
@@ -20,7 +20,7 @@
         </textarea>
     </div>
     <button type="reset">Resetear formulario</button>
-    <button onclick="validadNombre(event)"><%= creando ? 'Crear' : 'Actualizar' %> Usuario</button>
+    <button onclick="validarNombre(event)"><%= creando ? 'Crear' : 'Actualizar' %> Usuario</button>
 </form>
 
 <a href="/Usuario/inicio">
@@ -29,17 +29,25 @@
 
 
 <script>
-    function validadNombre(evento) {
-        //1. Revisar que el campo no este vacio
-        const inputNombre = document.getElementById("nombre")
-        const nombre = inputNombre.value
-        if (nombre.length<3){
-            evento.preventDefault()
+    function validarNombre(evento) {
+        // 0) Obtener el valor del campo
+        // 1) Revisar el campo no este vacio
+        // 2) Revisar el campo tenga 3 char
+        const inputNombre = document
+            .getElementById("nombre");
+        const nombre = inputNombre.value;
+        if (nombre.length < 3) {
+            event.preventDefault()
             alert('Tu nombre es muy corto')
-        }
+        }else{
 
-        //2. Revisar que el campo tenga 3 caracteres
-        //3. Obtener el valor del campo
+        }
 
     }
 </script>
+
+
+
+
+
+
