@@ -1,0 +1,72 @@
+/*
+            ETIQUETA h1{
+                PROPIEDAD:VALOR;
+            }
+
+            ID titulo{
+                PROPIEDAD:AZUL;
+            }
+
+            CLASE amarillo{
+                PROPIEDAD:AMARILLO;
+            }
+
+            ID > Busquedas complejas >CLASE > ETIQUETA
+
+         */
+p{
+    background-color: aliceblue;
+}
+
+#titulo{
+    background-color: yellow;
+}
+
+.rojo{
+    background-color: red;
+}
+
+.azul{
+    background-color: blue;
+}
+
+.amarillo{
+    background-color: yellow;
+}
+
+p.rojo.amarillo.azul{
+    background-color: greenyellow;
+}
+
+ul > li.rojo > span{
+    font-size: 30px;
+}
+
+h1 + p {
+    background-color: brown;
+}
+
+@keyframes crecerCambiarColor {
+    0% {
+        background-color: red;
+        font-size: 16px;
+    }
+    25% {
+        background-color: yellow;
+        font-size: 20px;
+    }
+    50% {
+        background-color: blue;
+        font-size: 40px;
+    }
+    100% {
+        background-color: red;
+        font-size: 16px;
+    }
+}
+
+.animacion{
+    animation-name: crecerCambiarColor;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+}

@@ -23,17 +23,21 @@ export class UsuarioController {
 
 
         let mensaje; // undefined
+        let clase; // undefined
 
         if (accion && nombre) {
             switch (accion) {
                 case 'actualizar':
                     mensaje = `Registro ${nombre} actualizado`;
+                    clase = 'info';
                     break;
                 case 'borrar':
                     mensaje = `Registro ${nombre} eliminado`;
+                    clase = 'danger';
                     break;
                 case 'crear':
                     mensaje = `Registro ${nombre} creado`;
+                    clase = 'succes';
                     break;
             }
         }
@@ -55,7 +59,8 @@ export class UsuarioController {
         response.render('inicio', {
             nombre: 'Adrian',
             arreglo: usuarios,
-            mensaje: mensaje
+            mensaje: mensaje,
+            clase: clase
         });
     }
 

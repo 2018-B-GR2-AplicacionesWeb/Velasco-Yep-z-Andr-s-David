@@ -1,80 +1,94 @@
-<style>
-    table, th, td {
-        border: 1px solid black;
-    }
-</style>
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Lista de Usuarios</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/mis_estilos.css">
 
-<% const existeMensaje = typeof mensaje !== "undefined" ? true : false; %>
+</head>
+<body>
+<div class="container">
 
-<% if(existeMensaje){ %>
+    <% const existeMensaje = typeof mensaje !== "undefined" ? true : false; %>
 
-    <p>MENSAJE: <%= mensaje %></p>
+    <% if(existeMensaje){ %>
 
-<% } %>
-<% var apellido = 'Eguez' %>
-<!-- h1 -> Header 1 -->
-<h1>  <%= nombre %> <%= apellido %>  </h1>
-<!-- p -> parrafo -->
+        <div class="animated fadeOut alert alert-<%= clase %>" role="alert">
+            MENSAJE: <%= mensaje %>
+        </div>
 
-<!-- a -> anchor-->
+    <% } %>
+    <% var apellido = 'Eguez' %>
+    <!-- h1 -> Header 1 -->
+    <h1> Lista de usuarios  </h1>
+    <p>
+        Crea, edita , busca y borra los registros de la tabla.
+    </p>
+    <!-- p -> parrafo -->
+
+    <!-- a -> anchor-->
 
 
-<script>
-    function holaMundo(evento) {
-        console.log(evento)
+    <script>
+        function holaMundo(evento) {
+            console.log(evento)
 
-        evento.preventDefault();
+            evento.preventDefault();
 
-        const respuesta = confirm('¿Estas seguro?')
+            const respuesta = confirm('¿Estas seguro?')
 
-        console.log('Hola mundo')
-    }
-
-    function borrar(evento){
-
-        const respuesta = confirm('¿Estas seguro?')
-
-        if(!respuesta){
-            event.preventDefault();
+            console.log('Hola mundo')
         }
 
-    }
+        function borrar(evento){
+
+            const respuesta = confirm('¿Estas seguro?')
+
+            if(!respuesta){
+                event.preventDefault();
+            }
+
+        }
 
 
 
-</script>
+    </script>
 
 
-<a href="http://www.google.com"
-   onclick="holaMundo(event)">
-    click
-</a>
 
 
-<form action="/Usuario/inicio"
-      method="get">
+            <form action="/Usuario/inicio"
+                  method="get">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <label for="busqueda">Busqueda</label>
+                            <input id="busqueda" type="text" name="busqueda" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-outline-info btn-block boton-buscar" type="submit">Buscar</button>
+                        <a class="quitar-decoracion" href="/Usuario/crear-usuario">
+                            <button class="btn btn-outline-success btn-espaciado btn-block">Crear Usuario</button>
+                        </a>
+                    </div>
+                </div>
+            </form>
 
-    <div>
-        <label for="busqueda">Busqueda</label>
-        <input id="busqueda" type="text" name="busqueda">
-    </div>
-
-    <button type="submit">Buscar</button>
-
-</form>
 
 
-<a href="/Usuario/crear-usuario">
-    <button>Crear Usuario</button>
-</a>
 
+    <h2> Arreglo </h2>
 
-<h2> Arreglo </h2>
-
-<!-- ul -> unordered list-->
-<!-- ol -> ordered list-->
-<!-- li -> list item -->
-<!--
+    <!-- ul -> unordered list-->
+    <!-- ol -> ordered list-->
+    <!-- li -> list item -->
+    <!--
 <ul>
 <% //arreglo.forEach((numero)=>{    %>
     <li><%= // numero   %></li>
@@ -83,39 +97,42 @@
 -->
 
 
-<table>
-    <!-- tr -> table row -->
-    <tr>
-        <!-- th -> table header -->
-        <th>Nombre</th>
-        <th>Biografía</th>
-        <th>Acciones</th>
-    </tr>
-    <!-- tr -> table row -->
-    <% arreglo.forEach((usuario)=>{ %>
-    <tr>
-        <!-- td -> table detail -->
-        <td><%= usuario.nombre %></td>
-        <td><%= usuario.biografia %></td>
-        <td>
-            <form action="/Usuario/borrar/<%= usuario.id %>"
-                  method="post"
-            >
-                <!--<button type="button">Yo no</button>-->
-                <!--<button>Yo si</button>-->
-                <button type="submit"
-                        onclick="borrar(event)">Eliminar</button>
-            </form>
-            <a href="/Usuario/actualizar-usuario/<%= usuario.id %>">
-                <button>Actualizar</button>
-            </a>
-        </td>
-    </tr>
-    <% }) %>
-</table>
+    <table class="table table-hover animated fadeInUp">
+        <caption>Lista de usuarios</caption>
+        <!-- tr -> table row -->
+        <thead>
+            <tr>
+            <!-- th -> table header -->
+                <th width="10%">Nombre</th>
+                <th width="50%">Biografía</th>
+                <th width="30%">Acciones</th>
+            </tr>
+        </thead>
+        <!-- tr -> table row -->
+        <% arreglo.forEach((usuario)=>{ %>
+        <tbody>
+            <tr>
+                <!-- td -> table detail -->
+                <td><%= usuario.nombre %></td>
+                <td><%= usuario.biografia %></td>
+                <td>
+                    <form action="/Usuario/borrar/<%= usuario.id %>"
+                          method="post"
+                    >
+                        <!--<button type="button">Yo no</button>-->
+                        <!--<button>Yo si</button>-->
+                        <button class="btn btn-outline-danger btn-block btn-espaciado" type="submit"
+                                onclick="borrar(event)">Eliminar</button>
+                    </form>
+                    <a class="quitar-decoracion" href="/Usuario/actualizar-usuario/<%= usuario.id %>">
+                        <button class="btn btn-outline-info btn-block btn-espaciado">Actualizar</button>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+        <% }) %>
+    </table>
 
-
-
-
-
-
+</div>
+</body>
+</html>

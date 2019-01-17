@@ -9,11 +9,12 @@ import {
     Query,
     Param,
     Res,
-    Post, Body
+    Post, Body, Session, BadRequestException
 } from '@nestjs/common';
 import {AppService} from './app.service';
 import {Observable, of} from "rxjs";
 import {Usuario, UsuarioService} from "./usuario/usuario.service";
+
 
 // http://192.168.1.2:3000/Usuario/saludar     METODO -> GET
 // http://192.168.1.2:3000/Usuario/salir   METODO -> POST
@@ -37,12 +38,14 @@ export class AppController {
     }
 
 
-    @Get('saludar')
+    @Get('sesion')
     saludar(
         @Query() queryParams,
         @Query('nombre') nombre,
         @Headers('seguridad') seguridad,
+        @Session() sesion
     ): string { // metodo!
+        console.log(sesion);
         return nombre;
     }
 
@@ -81,4 +84,38 @@ export class AppController {
         return of('Hola mundo');
     }
 
+    @Get('login')
+    @HttpCode(200)
+    loginVista(
+        @Res() response
+    ){
+        response.render('login');
+    }
+
+    @Post('login')
+    @HttpCode(200)
+    async loginMetodo(
+        @Body('username') username:string,
+        @Body('password') password:string,
+        @Res() response,
+        @Session() sesion,
+    ){
+        const identificado = await this._usuarioService.login(username, password);
+        if(identificado){
+            sesion.usuario = username;
+            response.redirect('/sesion')
+        }else {
+            throw new BadRequestException({mensaje:'Error en el login'})
+        }
+    }
+
+    @Get('logout')
+    logout(
+        @Res() response,
+        @Session() sesion,
+    ){
+        sesion.usuario = undefined;
+        sesion.destroy();
+        response.redirect('/login');
+    }
 }

@@ -20,6 +20,16 @@ export class UsuarioEntity {
     @Column()
     biografia:string;
 
+    @Column({
+        nullable:true
+    })
+    username:string;
+
+    @Column({
+        nullable:true
+    })
+    password:string;
+
     @BeforeInsert()
     verificarFuncion(){
         console.log('Ejecuta despues de antes de insertat')

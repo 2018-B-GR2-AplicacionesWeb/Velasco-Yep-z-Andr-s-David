@@ -1,0 +1,16 @@
+.btn-espaciado {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.quitar-decoracion:hover{
+    text-decoration: none;
+}
+
+.boton-buscar{
+    margin-top: 31px;
+}
+
+.animated{
+    animation-duration:2s;
+}
