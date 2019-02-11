@@ -3,19 +3,20 @@
     margin-bottom: 10px;
 }
 
-.quitar-decoracion:hover{
+.quitar-decoracion:hover {
     text-decoration: none;
 }
 
-.boton-buscar{
+.btn-buscar {
     margin-top: 31px;
 }
 
-.animated{
-    animation-duration:2s;
+.animated {
+    animation-duration: 2s;
 }
 
-.size-img{
+.tamanio-imagen {
     height: 300px;
-    width: 200px;
 }
+
+

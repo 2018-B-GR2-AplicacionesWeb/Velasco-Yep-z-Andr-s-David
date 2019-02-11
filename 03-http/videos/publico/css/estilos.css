@@ -1,41 +1,87 @@
 /*
-            ETIQUETA h1{
-                PROPIEDAD:VALOR;
+            CSS
+
+            BUSQUEDA {
+                PROPIEDAD:VALOR-PROPIEDAD;
+                PROPIEDAD:VALOR-PROPIEDAD;
+                PROPIEDAD:VALOR-PROPIEDAD;
+                PROPIEDAD:VALOR-PROPIEDAD;
             }
 
-            ID titulo{
-                PROPIEDAD:AZUL;
+
+            ETIQUETA(h1) {
+                COLOR:VERDE;
             }
 
-            CLASE amarillo{
-                PROPIEDAD:AMARILLO;
+            ID (titulo) {
+                COLOR:AZUL;
             }
 
-            ID > Busquedas complejas >CLASE > ETIQUETA
 
-         */
-p{
+            CLASE (verde) {
+                COLOR:VERDE;
+            }
+
+            CLASE (azul) {
+                COLOR:AZUL;
+            }
+
+            busqueda complejas
+
+            h1.amarillo.verde.rojo {
+
+            }
+
+            p.rojo {
+            }
+
+            ul.lista > li.item > a > span{
+                color:black;
+            }
+
+            h1 + p + span + li + a{
+                color:black;
+            }
+
+
+
+
+
+
+            <p class="azul amarillo verde">MMMM</p>
+
+            ID > BUSQUEDAS COMPLEJAS > CLASE > ETIQUETA
+
+            <h1 id="titulo" class="amarillo">OMG</h1>
+
+
+
+
+
+            */
+p {
     background-color: aliceblue;
 }
-
-#titulo{
+#titulo {
     background-color: yellow;
 }
-
-.rojo{
+.rojo {
     background-color: red;
 }
-
-.azul{
+.azul {
     background-color: blue;
 }
 
-.amarillo{
-    background-color: yellow;
+p.rojo{
+    background-color: darkblue;
 }
 
-p.rojo.amarillo.azul{
+p.azul.amarillo.rojo {
     background-color: greenyellow;
+}
+
+.amarillo {
+    background-color: yellow;
 }
 
 ul > li.rojo > span{
@@ -47,15 +93,15 @@ h1 + p {
 }
 
 @keyframes crecerCambiarColor {
-    0% {
+    0%   {
         background-color: red;
         font-size: 16px;
     }
-    25% {
+    25%  {
         background-color: yellow;
         font-size: 20px;
     }
-    50% {
+    50%  {
         background-color: blue;
         font-size: 40px;
     }
@@ -65,7 +111,7 @@ h1 + p {
     }
 }
 
-.animacion{
+.animacion {
     animation-name: crecerCambiarColor;
     animation-duration: 5s;
     animation-iteration-count: infinite;

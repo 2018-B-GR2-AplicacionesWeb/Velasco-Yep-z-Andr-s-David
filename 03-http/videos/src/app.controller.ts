@@ -14,7 +14,8 @@ import {
 import {AppService} from './app.service';
 import {Observable, of} from "rxjs";
 import {Usuario, UsuarioService} from "./usuario/usuario.service";
-
+import {ExpressionStatement} from "typescript";
+import {Code} from "typeorm";
 
 // http://192.168.1.2:3000/Usuario/saludar     METODO -> GET
 // http://192.168.1.2:3000/Usuario/salir   METODO -> POST
@@ -38,14 +39,14 @@ export class AppController {
     }
 
 
-    @Get('sesion')
+    @Get('saludar')
     saludar(
         @Query() queryParams,
         @Query('nombre') nombre,
         @Headers('seguridad') seguridad,
         @Session() sesion
     ): string { // metodo!
-        console.log(sesion);
+        console.log('Sesion:', sesion);
         return nombre;
     }
 
@@ -84,38 +85,46 @@ export class AppController {
         return of('Hola mundo');
     }
 
-    @Get('login')
-    @HttpCode(200)
-    loginVista(
-        @Res() response
-    ){
-        response.render('login');
-    }
-
     @Post('login')
     @HttpCode(200)
     async loginMetodo(
-        @Body('username') username:string,
-        @Body('password') password:string,
+        @Body('username') username: string,
+        @Body('password') password: string,
         @Res() response,
-        @Session() sesion,
-    ){
-        const identificado = await this._usuarioService.login(username, password);
-        if(identificado){
+        @Session() sesion
+    ) {
+        const identificado = await this._usuarioService
+            .login(username, password);
+
+        if (identificado) {
+
             sesion.usuario = username;
-            response.redirect('/sesion')
-        }else {
-            throw new BadRequestException({mensaje:'Error en el login'})
+
+            response.redirect('/inicio')
+
+        } else {
+            throw new BadRequestException({mensaje: 'Error login'})
         }
+
+    }
+
+    @Get('login')
+    loginVista(
+        @Res() response
+    ) {
+        response.render('login');
     }
 
     @Get('logout')
     logout(
         @Res() response,
         @Session() sesion,
-    ){
+    ) {
         sesion.usuario = undefined;
         sesion.destroy();
         response.redirect('/login');
+
     }
+
+
 }

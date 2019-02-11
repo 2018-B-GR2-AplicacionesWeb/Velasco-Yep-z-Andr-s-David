@@ -1,8 +1,8 @@
-import {Inject, Injectable} from "@nestjs/common";
-import {UsuarioEntity} from "./usuario-entity";
+import {Injectable} from "@nestjs/common";
 import {Repository} from "typeorm";
-import {FindManyOptions} from "typeorm";
 import {InjectRepository} from '@nestjs/typeorm';
+import {UsuarioEntity} from "./usuario-entity";
+import {FindManyOptions} from "../../node_modules/typeorm/find-options/FindManyOptions";
 
 @Injectable()
 export class UsuarioService {
@@ -25,45 +25,60 @@ export class UsuarioService {
     ];
     registroActual = 4;
 
-    // Los constructores en el NEST SIRVEN PARA INJECTAR DEPENDENCIAS
-    // @ts-ignore
+    // Inyectar Dependencias
     constructor(
         @InjectRepository(UsuarioEntity)
         private readonly _usuarioRepository: Repository<UsuarioEntity>,
-    ){}
+    ) {
+    }
 
-    async buscar(parametros?:FindManyOptions<UsuarioEntity>):Promise<UsuarioEntity[]>{
+    buscar(parametros?: FindManyOptions<UsuarioEntity>)
+        : Promise<UsuarioEntity[]> {
         return this._usuarioRepository.find(parametros);
     }
 
-    borrar(idUsuario:number):Promise<UsuarioEntity>{
-        const usuarioEntityAEliminar= this._usuarioRepository.create({
-            id:idUsuario
-        });
-        return this._usuarioRepository.remove(usuarioEntityAEliminar);
-    }
-
     async crear(nuevoUsuario: Usuario): Promise<UsuarioEntity> {
-        const usuarioEntity = this._usuarioRepository.create(nuevoUsuario);
-        const usuarioCreado = await this._usuarioRepository.save(usuarioEntity);
+
+        // Instanciar una entidad -> .create()
+        const usuarioEntity = this._usuarioRepository
+            .create(nuevoUsuario);
+
+        // Guardar una entidad en la BDD -> .save()
+        const usuarioCreado = await this._usuarioRepository
+            .save(usuarioEntity);
+
         return usuarioCreado;
     }
 
     actualizar(idUsuario: number,
                nuevoUsuario: Usuario): Promise<UsuarioEntity> {
+
         nuevoUsuario.id = idUsuario;
+
         const usuarioEntity = this._usuarioRepository.create(nuevoUsuario);
-        return this._usuarioRepository.save(usuarioEntity)
+
+        return this._usuarioRepository.save(usuarioEntity);
     }
 
+    borrar(idUsuario: number): Promise<UsuarioEntity> {
 
-    buscarPorId(idUsuario: number) {
-        return this._usuarioRepository.findOne(idUsuario)
+        // CREA UNA INSTANCIA DE LA ENTIDAD
+        const usuarioEntityAEliminar = this._usuarioRepository
+            .create({
+                id: idUsuario
+            });
+
+
+        return this._usuarioRepository.remove(usuarioEntityAEliminar)
     }
 
-    buscarPorNombreOBiografia(busqueda:string): Usuario[]{
+    buscarPorId(idUsuario: number): Promise<UsuarioEntity> {
+        return this._usuarioRepository.findOne(idUsuario);
+    }
+
+    buscarPorNombreOBiografia(busqueda: string): Usuario[] {
         return this.usuarios.filter(
-            (usuario)=>{
+            (usuario) => {
 
                 // Si la busqueda contiene algo del nombre
                 const tieneAlgoEnElnombre = usuario
@@ -110,4 +125,6 @@ export interface Usuario {
     id: number;
     nombre: string;
     biografia: string;
+    username?: string;
+    password?: string;
 }

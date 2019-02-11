@@ -3,6 +3,8 @@ import {Body, Controller, Get, Param, Post, Query, Res} from "@nestjs/common";
 import {Usuario, UsuarioService} from "./usuario.service";
 import {UsuarioEntity} from "./usuario-entity";
 import {Like} from "typeorm";
+import {UsuarioCreateDto} from "./dto/usuario-create.dto";
+import {validate, ValidationError} from "class-validator";
 
 @Controller('Usuario')
 export class UsuarioController {
@@ -28,39 +30,43 @@ export class UsuarioController {
         if (accion && nombre) {
             switch (accion) {
                 case 'actualizar':
-                    mensaje = `Registro ${nombre} actualizado`;
                     clase = 'info';
+                    mensaje = `Registro ${nombre} actualizado`;
                     break;
                 case 'borrar':
-                    mensaje = `Registro ${nombre} eliminado`;
                     clase = 'danger';
+                    mensaje = `Registro ${nombre} eliminado`;
                     break;
                 case 'crear':
+                    clase = 'success';
                     mensaje = `Registro ${nombre} creado`;
-                    clase = 'succes';
                     break;
             }
         }
 
         let usuarios: UsuarioEntity[];
         if (busqueda) {
+
             const consulta = {
                 where: [
-                    {nombre: Like(`%${busqueda}%`)},
-                    {biografia: Like(`%${busqueda}%`)}
+                    {
+                        nombre: Like(`%${busqueda}%`)
+                    },
+                    {
+                        biografia: Like(`%${busqueda}%`)
+                    }
                 ]
             };
-            usuarios = await this._usuarioService
-                .buscar(consulta);
+            usuarios = await this._usuarioService.buscar(consulta);
         } else {
-            usuarios = await this._usuarioService.buscar()
+            usuarios = await this._usuarioService.buscar();
         }
 
         response.render('inicio', {
             nombre: 'Adrian',
             arreglo: usuarios,
             mensaje: mensaje,
-            clase: clase
+            accion: clase
         });
     }
 
@@ -69,9 +75,11 @@ export class UsuarioController {
         @Param('idUsuario') idUsuario: string,
         @Res() response
     ) {
-        const usuarioEncontrado = await this._usuarioService.buscarPorId(Number(idUsuario))
+        const usuarioEncontrado = await this._usuarioService
+            .buscarPorId(+idUsuario);
 
         await this._usuarioService.borrar(Number(idUsuario));
+
         const parametrosConsulta = `?accion=borrar&nombre=${usuarioEncontrado.nombre}`;
 
         response.redirect('/Usuario/inicio' + parametrosConsulta);
@@ -111,8 +119,7 @@ export class UsuarioController {
     ) {
         usuario.id = +idUsuario;
 
-        await this._usuarioService
-            .actualizar(+idUsuario, usuario);
+        await this._usuarioService.actualizar(+idUsuario, usuario);
 
         const parametrosConsulta = `?accion=actualizar&nombre=${usuario.nombre}`;
 
@@ -126,23 +133,75 @@ export class UsuarioController {
         @Body() usuario: Usuario,
         @Res() response
     ) {
+        const usuarioValidado = new UsuarioCreateDto();
 
-        await this._usuarioService.crear(usuario);
+        usuarioValidado.nombre = usuario.nombre;
+        usuarioValidado.biografia = usuario.biografia;
+        usuarioValidado.username = usuario.username;
+        usuarioValidado.password = usuario.password;
 
-        const parametrosConsulta = `?accion=crear&nombre=${usuario.nombre}`;
+        const errores: ValidationError[] = await validate(usuarioValidado);
 
-        response.redirect('/Usuario/inicio' + parametrosConsulta)
+        const hayErrores = errores.length > 0;
+
+        if(hayErrores){
+            console.error(errores);
+            response.redirect('/Usuario/crear-usuario?error=Hay errores');
+
+        }else{
+            await this._usuarioService.crear(usuario);
+
+            const parametrosConsulta = `?accion=crear&nombre=${usuario.nombre}`;
+
+            response.redirect('/Usuario/inicio' + parametrosConsulta);
+        }
+
+
+
+    }
+
+    @Get(':id')
+    obtenerPorId(
+        @Param('id') idUsuario
+    ){
+        console.log(idUsuario);
+        return this._usuarioService.buscarPorId(+idUsuario);
     }
 }
 
 
 
+// DTO -> Data Transfer Object
+
+// CREAR  UsuarioCreateDTO
+
+// nombre*
+// cedula*
+// password*
+// direccion
+// numeroTelefono
+// celular
+// apodo
 
 
+// ACTUALIZAR UsuarioUpdateDTO
 
+// nombre
+// password
+// cedula -> no actualizamos la cedula
+// direccion
+// numeroTelefono
+// celular
+// apodo
 
+// VISUALIZANDO DTO
 
-
+// nombre
+// cedula
+// direccion
+// numeroTelefono
+// celular
+// apodo
 
 
 

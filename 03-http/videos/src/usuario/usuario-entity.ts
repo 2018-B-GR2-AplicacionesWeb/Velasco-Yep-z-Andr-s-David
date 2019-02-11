@@ -1,44 +1,56 @@
-// usuario--entity.ts
+// usuario-entity.ts
 
-import {Entity} from 'typeorm';
-// @ts-ignore
-import {Column, PrimaryGeneratedColumn} from 'typeorm';
-import {BeforeInsert} from 'typeorm';
-import {OneToMany} from "typeorm";
+import {BeforeInsert, Column, Entity, Index, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {LibroEntity} from "../libro/libro.entity";
 
 @Entity('db_usuario')
 export class UsuarioEntity {
+
     @PrimaryGeneratedColumn()
-    id:number;
-    @Column({
-        name:'nombrePrimero',
-        type:'varchar',
-        length:30
-    })
-    nombre:string;
-    @Column()
-    biografia:string;
+    id: number;
+
+    @Index()
+    @Column(
+        {
+            name: 'nombre_primero',
+            type: 'varchar',
+            length: 50,
+            default: 'nombre'
+        }
+    )
+    nombre: string;
 
     @Column({
-        nullable:true
+        nullable: true,
     })
-    username:string;
+    biografia: string;
 
     @Column({
-        nullable:true
+        nullable: true
     })
-    password:string;
+    username: string;
+
+    @Column({
+        nullable: true
+    })
+    password: string;
 
     @BeforeInsert()
-    verificarFuncion(){
-        console.log('Ejecuta despues de antes de insertat')
+    antesDeInsertar() {
+        console.log('Ejecutandome antes de insertar');
+    }
+
+    @BeforeInsert()
+    verificarFuncion() {
+        console.log('Ejecuta despues de antes de insertar');
     }
 
     @OneToMany(
-        libros => LibroEntity, // Tipo de Dato Un Usuario
-        libro => libro.usuario, // CUAL ES EL CAMPO FK
+        type => LibroEntity, // Tipo de Dato Un Usuario a muchos
+        // Libros[]
+        libro => libro.usuario // Cual es el campo FK
     )
-    libros:LibroEntity[]
+    libros: LibroEntity[];
+
 
 }
